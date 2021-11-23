@@ -1,0 +1,30 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Leandro Dorileo <leandro.maciel.dorileo@intel.com>
+Date: Thu, 19 Sep 2019 14:51:20 -0700
+Subject: [PATCH] fileattrs: Don't scan libraries in glibc auto-search dirs for
+ Provides
+
+Those libraries are meant to be runtime replacements of the ones in the regular
+$libdir, based on CPU features at runtime. If a packager decides to split them into
+a separate sub-package, the dependency resolver shouldn't be deciding to install
+that instead of the base package.
+
+[2021-05-05]: Remove elfoptimized.attr. This will installed by clr-rpm-config
+              instead to ease maintenance.
+
+Ported-by: Leandro Dorileo <leandro.maciel.dorileo@intel.com>
+Signed-off-by: Thiago Macieira <thiago.macieira@intel.com>
+Signed-off-by: Patrick McCarty <patrick.mccarty@intel.com>
+---
+ fileattrs/elf.attr | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/fileattrs/elf.attr b/fileattrs/elf.attr
+index 060ddc0..7964b67 100644
+--- a/fileattrs/elf.attr
++++ b/fileattrs/elf.attr
+@@ -2,3 +2,4 @@
+ %__elf_requires		%{_rpmconfigdir}/elfdeps --requires %{?__filter_GLIBC_PRIVATE:--filter-private}
+ %__elf_magic		ELF (32|64)-bit.*$
+ %__elf_flags		exeonly
++%__elf_exclude_path     ^(/usr/lib/debug|(/usr)?/lib(64)?/(i686|x86_64|sse2|haswell|tls))/
